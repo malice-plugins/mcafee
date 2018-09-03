@@ -63,9 +63,10 @@ Run 'mcafee COMMAND --help' for more information on a command.
 {
   "mcafee": {
     "infected": true,
-    "result": "EICAR Test-NOT virus!!!",
-    "engine": "2.1.2",
-    "updated": "20170129"
+    "result": "EICAR test file",
+    "engine": "5600.1067",
+    "database": "9005",
+    "updated": "20180903"
   }
 }
 ```
@@ -76,9 +77,9 @@ Run 'mcafee COMMAND --help' for more information on a command.
 
 #### McAfee
 
-| Infected | Result                  | Engine | Updated  |
-| -------- | ----------------------- | ------ | -------- |
-| true     | EICAR Test-NOT virus!!! | 2.1.2  | 20170129 |
+| Infected |     Result      |  Engine   | Updated  |
+| :------: | :-------------: | :-------: | :------: |
+|   true   | EICAR test file | 5600.1067 | 20180903 |
 
 ---
 
