@@ -1,11 +1,11 @@
-#### Avast
+#### McAfee
 
-| Infected |       Result        | Engine | Updated  |
-| :------: | :-----------------: | :----: | :------: |
-|   true   | Win32:Lecna-I [Trj] | 2.2.0  | 20180903 |
+| Infected |    Result    |  Engine   | Updated  |
+| :------: | :----------: | :-------: | :------: |
+|   true   | BackDoor-CSB | 5600.1067 | 20180903 |
 
-#### Avast
+#### McAfee
 
-| Infected | Result | Engine | Updated  |
-| :------: | :----: | :----: | :------: |
-|  false   |        | 2.2.0  | 20180903 |
+| Infected | Result |  Engine   | Updated  |
+| :------: | :----: | :-------: | :------: |
+|  false   |        | 5600.1067 | 20180903 |

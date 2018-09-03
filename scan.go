@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"html/template"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -37,7 +37,7 @@ var (
 	BuildTime string
 
 	path string
-
+	hash string
 	// es is the elasticsearch database object
 	es elasticsearch.Database
 )
@@ -64,7 +64,8 @@ type ResultsData struct {
 
 func assert(err error) {
 	if err != nil {
-		if err.Error() != "exit status 1" {
+		// skip exit code 13 (which means a virus was found)
+		if err.Error() != "exit status 13" {
 			log.WithFields(log.Fields{
 				"plugin":   name,
 				"category": category,
@@ -77,25 +78,20 @@ func assert(err error) {
 // AvScan performs antivirus scan
 func AvScan(timeout int) McAfee {
 
-	// Give mcafeed 10 seconds to finish
-	mcafeedCtx, mcafeedCancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
-	defer mcafeedCancel()
-	// McAfee needs to have the daemon started first
-	_, err := utils.RunCommand(mcafeedCtx, "/etc/init.d/mcafee", "start")
-	assert(err)
+	defer os.Remove("/tmp/" + hash + ".xml")
 
 	var results ResultsData
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
 	defer cancel()
 
-	output, err := utils.RunCommand(ctx, "scan", "-abfu", path)
+	output, err := utils.RunCommand(ctx, "/usr/local/uvscan/uvscan_secure", path, "--xmlpath=/tmp/"+hash+".xml")
 	assert(err)
 	results, err = ParseMcAfeeOutput(output)
 
 	if err != nil {
 		// If fails try a second time
-		output, err := utils.RunCommand(ctx, "scan", "-abfu", path)
+		output, err := utils.RunCommand(ctx, "/usr/local/uvscan/uvscan_secure", path, "--xmlpath=/tmp/"+hash+".xml")
 		assert(err)
 		results, err = ParseMcAfeeOutput(output)
 		assert(err)
@@ -115,29 +111,26 @@ func ParseMcAfeeOutput(mcafeeout string) (ResultsData, error) {
 		"path":     path,
 	}).Debug("McAfee Output: ", mcafeeout)
 
-	mcafee := ResultsData{
-		Infected: false,
-		Engine:   getMcAfeeVersion(),
-		// Database: getMcAfeeVPS(),
-		Updated: getUpdatedDate(),
+	xmlFile, err := os.Open("/tmp/" + hash + ".xml")
+	if err != nil {
+		fmt.Print(err)
 	}
+	defer xmlFile.Close()
 
-	result := strings.Split(mcafeeout, "\t")
+	byteValue, _ := ioutil.ReadAll(xmlFile)
 
-	if !strings.Contains(mcafeeout, "Found:") {
-		mcafee.Infected = true
-		mcafee.Result = strings.TrimSpace(result[1])
+	var results McAfeeResults
+	err = xml.Unmarshal(byteValue, &results)
+
+	mcafee := ResultsData{
+		Infected: strings.EqualFold(results.File.Status, "infected"),
+		Engine:   results.Preamble.AVEngineVersion.Value,
+		Database: results.Preamble.DatSetVersion.Value,
+		Updated:  getUpdatedDate(),
+		Result:   results.File.VirusName,
 	}
 
 	return mcafee, nil
-}
-
-// Get Anti-Virus scanner version
-func getMcAfeeVersion() string {
-	versionOut, err := utils.RunCommand(nil, "/usr/local/uvscan/uvscan", "--version")
-	assert(err)
-	log.Debug("McAfee Version: ", versionOut)
-	return strings.TrimSpace(versionOut)
 }
 
 func parseUpdatedDate(date string) string {
@@ -165,34 +158,6 @@ func updateAV(ctx context.Context) error {
 }
 
 func didLicenseExpire() bool {
-	if _, err := os.Stat("/etc/mcafee/license.mcafeelic"); os.IsNotExist(err) {
-		log.Fatal("could not find mcafee license file")
-	}
-	license, err := ioutil.ReadFile("/etc/mcafee/license.mcafeelic")
-	assert(err)
-
-	lines := strings.Split(string(license), "\n")
-	// Extract Virus string and extract colon separated lines into an slice
-	for _, line := range lines {
-		if len(line) != 0 {
-			if strings.Contains(line, "UpdateValidThru") {
-				expireDate := strings.TrimSpace(strings.TrimPrefix(line, "UpdateValidThru="))
-				// 1501774374
-				i, err := strconv.ParseInt(expireDate, 10, 64)
-				if err != nil {
-					log.Fatal(err)
-				}
-				expires := time.Unix(i, 0)
-				log.WithFields(log.Fields{
-					"plugin":   name,
-					"category": category,
-					"expired":  expires.Before(time.Now()),
-				}).Debug("McAfee License Expires: ", expires)
-				return expires.Before(time.Now())
-			}
-		}
-	}
-
 	log.Error("could not find expiration date in license file")
 	return false
 }
@@ -347,10 +312,11 @@ func main() {
 				assert(err)
 			}
 
-			if didLicenseExpire() {
-				log.Errorln("mcafee license has expired")
-				log.Errorln("please get a new one here: https://www.mcafee.com/linux-server-antivirus")
-			}
+			// if didLicenseExpire() {
+			// 	log.Errorln("mcafee license has expired")
+			// 	log.Errorln("please get a new one here: http://www.mcafee.com/ca/about/contact-us.aspx")
+			// }
+			hash = utils.GetSHA256(path)
 
 			mcafee := AvScan(c.Int("timeout"))
 			mcafee.Results.MarkDown = generateMarkDownTable(mcafee)
@@ -361,7 +327,7 @@ func main() {
 					return errors.Wrap(err, "failed to initalize elasticsearch")
 				}
 				err = es.StorePluginResults(database.PluginResults{
-					ID:       utils.Getopt("MALICE_SCANID", utils.GetSHA256(path)),
+					ID:       utils.Getopt("MALICE_SCANID", hash),
 					Name:     name,
 					Category: category,
 					Data:     structs.Map(mcafee.Results),
@@ -395,7 +361,7 @@ func main() {
 			log.WithFields(log.Fields{
 				"plugin":   name,
 				"category": category,
-			}).Fatal(fmt.Errorf("Please supply a file to scan with malice/mcafee"))
+			}).Fatal(fmt.Errorf("Please supply a file to scan with malice/%s", name))
 		}
 		return nil
 	}

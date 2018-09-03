@@ -1,6 +1,6 @@
 # malice-mcafee
 
-[![Circle CI](https://circleci.com/gh/malice-plugins/mcafee.png?style=shield)](https://circleci.com/gh/malice-plugins/mcafee) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/mcafee.svg)](https://store.docker.com/community/images/malice/mcafee) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/mcafee.svg)](https://store.docker.com/community/images/malice/mcafee) [![Docker Image](https://img.shields.io/badge/docker%20image-459MB-blue.svg)](https://store.docker.com/community/images/malice/mcafee)
+[![Circle CI](https://circleci.com/gh/malice-plugins/mcafee.png?style=shield)](https://circleci.com/gh/malice-plugins/mcafee) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/mcafee.svg)](https://store.docker.com/community/images/malice/mcafee) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/mcafee.svg)](https://store.docker.com/community/images/malice/mcafee) [![Docker Image](https://img.shields.io/badge/docker%20image-487MB-blue.svg)](https://store.docker.com/community/images/malice/mcafee)
 
 Malice McAfee AntiVirus Plugin
 

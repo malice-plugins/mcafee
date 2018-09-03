@@ -1,5 +1,5 @@
 {
-  "took": 40,
+  "took": 37,
   "timed_out": false,
   "_shards": {
     "total": 1,
@@ -14,43 +14,43 @@
       {
         "_index": "malice",
         "_type": "samples",
-        "_id": "I3fBnGUBcXxpSgRUHlym",
+        "_id": "KBbZoGUBeQiuTYqIo0Jv",
         "_score": 1,
         "_source": {
           "plugins": {
             "av": {
-              "avast": {
-                "Database": "18090204",
-                "Engine": "2.2.0",
+              "mcafee": {
+                "Database": "9005",
+                "Engine": "5600.1067",
                 "Infected": true,
-                "Result": "Win32:Lecna-I [Trj]",
+                "Result": "BackDoor-CSB",
                 "Updated": "20180903",
-                "markdown": "#### Avast\n| Infected      | Result      | Engine      | Updated      |\n|:-------------:|:-----------:|:-----------:|:------------:|\n| true | Win32:Lecna-I [Trj] | 2.2.0 | 20180903 |\n"
+                "markdown": "#### McAfee\n| Infected      | Result      | Engine      | Updated      |\n|:-------------:|:-----------:|:-----------:|:------------:|\n| true | BackDoor-CSB | 5600.1067 | 20180903 |\n"
               }
             }
           },
-          "scan_date": "2018-09-03T00:07:06.640947973Z"
+          "scan_date": "2018-09-03T19:12:22.369551471Z"
         }
       },
       {
         "_index": "malice",
         "_type": "samples",
-        "_id": "JHfBnGUBcXxpSgRUMFwP",
+        "_id": "KRbZoGUBeQiuTYqIsULP",
         "_score": 1,
         "_source": {
           "plugins": {
             "av": {
-              "avast": {
-                "Database": "18090204",
-                "Engine": "2.2.0",
+              "mcafee": {
+                "Database": "9005",
+                "Engine": "5600.1067",
                 "Infected": false,
                 "Result": "",
                 "Updated": "20180903",
-                "markdown": "#### Avast\n| Infected      | Result      | Engine      | Updated      |\n|:-------------:|:-----------:|:-----------:|:------------:|\n| false |  | 2.2.0 | 20180903 |\n"
+                "markdown": "#### McAfee\n| Infected      | Result      | Engine      | Updated      |\n|:-------------:|:-----------:|:-----------:|:------------:|\n| false |  | 5600.1067 | 20180903 |\n"
               }
             }
           },
-          "scan_date": "2018-09-03T00:07:11.117232295Z"
+          "scan_date": "2018-09-03T19:12:26.062064259Z"
         }
       }
     ]

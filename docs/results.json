@@ -1,9 +1,9 @@
 {
-  "avast": {
+  "mcafee": {
     "infected": true,
-    "result": "Win32:Lecna-I [Trj]",
-    "engine": "2.2.0",
-    "database": "18090204",
+    "result": "BackDoor-CSB",
+    "engine": "5600.1067",
+    "database": "9005",
     "updated": "20180903"
   }
 }

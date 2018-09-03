@@ -38,16 +38,16 @@ go-test:
 	go test -v
 
 avtest:
-	# @echo "===> McAfee Version"
-	# @docker run --init --rm --entrypoint=bash $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan --version" > tests/av_version.out
-	# @echo "===> McAfee EICAR Test"
-	# @docker run --init --rm --entrypoint=bash $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan EICAR" > tests/av_eicar_scan.out || true
-	# @echo "===> McAfee $(MALWARE) Test"
-	# @docker run --init --rm --entrypoint=bash -v $(PWD):/malware $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan $(MALWARE)" > tests/av_malware_scan.out || true
-	# @echo "===> McAfee $(NOT_MALWARE) Test"
-	# @docker run --init --rm --entrypoint=bash -v $(PWD):/malware $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan $(NOT_MALWARE)" > tests/av_clean_scan.out || true
-	# @echo "===> McAfee $(MALWARE) XML Test"
-	# @docker run --init --rm --entrypoint=bash -v $(PWD):/malware $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan $(MALWARE) --xmlpath=tests/av_malware.xml"
+	@echo "===> McAfee Version"
+	@docker run --init --rm --entrypoint=bash $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan --version" > tests/av_version.out
+	@echo "===> McAfee EICAR Test"
+	@docker run --init --rm --entrypoint=bash $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan EICAR" > tests/av_eicar_scan.out || true
+	@echo "===> McAfee $(MALWARE) Test"
+	@docker run --init --rm --entrypoint=bash -v $(PWD):/malware $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan $(MALWARE)" > tests/av_malware_scan.out || true
+	@echo "===> McAfee $(NOT_MALWARE) Test"
+	@docker run --init --rm --entrypoint=bash -v $(PWD):/malware $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan $(NOT_MALWARE)" > tests/av_clean_scan.out || true
+	@echo "===> McAfee $(MALWARE) XML Test"
+	@docker run --init --rm --entrypoint=bash -v $(PWD):/malware $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan $(MALWARE) --xmlpath=tests/av_malware.xml" || true
 	@echo "===> McAfee $(NOT_MALWARE) XML Test"
 	@docker run --init --rm --entrypoint=bash -v $(PWD):/malware $(ORG)/$(NAME):$(VERSION) -c "/usr/local/uvscan/uvscan $(NOT_MALWARE) --xmlpath=tests/av_clean.xml"
 
