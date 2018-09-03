@@ -1,0 +1,9 @@
+{
+  "avast": {
+    "infected": true,
+    "result": "Win32:Lecna-I [Trj]",
+    "engine": "2.2.0",
+    "database": "18090204",
+    "updated": "20180903"
+  }
+}

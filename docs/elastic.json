@@ -1,0 +1,58 @@
+{
+  "took": 40,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 2,
+    "max_score": 1,
+    "hits": [
+      {
+        "_index": "malice",
+        "_type": "samples",
+        "_id": "I3fBnGUBcXxpSgRUHlym",
+        "_score": 1,
+        "_source": {
+          "plugins": {
+            "av": {
+              "avast": {
+                "Database": "18090204",
+                "Engine": "2.2.0",
+                "Infected": true,
+                "Result": "Win32:Lecna-I [Trj]",
+                "Updated": "20180903",
+                "markdown": "#### Avast\n| Infected      | Result      | Engine      | Updated      |\n|:-------------:|:-----------:|:-----------:|:------------:|\n| true | Win32:Lecna-I [Trj] | 2.2.0 | 20180903 |\n"
+              }
+            }
+          },
+          "scan_date": "2018-09-03T00:07:06.640947973Z"
+        }
+      },
+      {
+        "_index": "malice",
+        "_type": "samples",
+        "_id": "JHfBnGUBcXxpSgRUMFwP",
+        "_score": 1,
+        "_source": {
+          "plugins": {
+            "av": {
+              "avast": {
+                "Database": "18090204",
+                "Engine": "2.2.0",
+                "Infected": false,
+                "Result": "",
+                "Updated": "20180903",
+                "markdown": "#### Avast\n| Infected      | Result      | Engine      | Updated      |\n|:-------------:|:-----------:|:-----------:|:------------:|\n| false |  | 2.2.0 | 20180903 |\n"
+              }
+            }
+          },
+          "scan_date": "2018-09-03T00:07:11.117232295Z"
+        }
+      }
+    ]
+  }
+}
