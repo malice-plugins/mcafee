@@ -22,7 +22,7 @@ RUN set -x \
 
 # Update McAfee Definitions
 COPY update.sh /usr/local/uvscan/update
-RUN /usr/local/uvscan/update
+RUN mkdir -p /opt/malice && /usr/local/uvscan/update
 
 ENV GO_VERSION 1.11
 

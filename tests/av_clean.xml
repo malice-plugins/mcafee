@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Uvscan Results -->
+<Uvscan>
+	<Preamble>
+		<Product_name value="McAfee VirusScan Command Line for Linux64" />
+		<Version value="6.0.4.564" />
+		<License_info value="(408) 988-3832 EVALUATION COPY - September 03 2018" />
+		<AV_Engine_version value="5600.1067" />
+		<Dat_set_version value="9004" />
+	</Preamble>
+	<Date_Time value="2018-Sep-03 18:19:09" />
+	<Options value="tests/not.malware --xmlpath=tests/av_clean.xml " />
+	<Time value="00:00.00" />
+</Uvscan>

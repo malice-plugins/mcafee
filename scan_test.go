@@ -1,48 +1,53 @@
 package main
 
 import (
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
 
 // TestParseResult tests the __ function.
-func TestParseResult(t *testing.T) {
-	r, err := ioutil.ReadFile("tests/av_scan.out")
+func TestParseMalwareResultXML(t *testing.T) {
+	xmlFile, err := os.Open("tests/av_malware.xml")
 	if err != nil {
 		fmt.Print(err)
 	}
+	defer xmlFile.Close()
 
-	result := strings.Split(string(r), "\t")
+	byteValue, _ := ioutil.ReadAll(xmlFile)
 
-	if !strings.Contains(string(r), "[OK]") {
+	var r McAfeeResults
+	err = xml.Unmarshal(byteValue, &r)
+
+	if strings.EqualFold(r.File.Status, "infected") {
 		if true {
-			t.Log("Infected: ", true)
-			t.Log("Result: ", strings.TrimSpace(result[1]))
+			t.Log("Infected: ", r.File.Status)
+			t.Log("Result: ", strings.TrimSpace(r.File.VirusName))
 		}
 	}
-
 }
 
-// TestParseVersion tests the __ function.
-func TestParseVersion(t *testing.T) {
-	v, err := ioutil.ReadFile("tests/av_version.out")
+func TestParseCleanResultXML(t *testing.T) {
+	xmlFile, err := os.Open("tests/av_clean.xml")
 	if err != nil {
 		fmt.Print(err)
 	}
+	defer xmlFile.Close()
 
-	d, err := ioutil.ReadFile("tests/av_vps.out")
-	if err != nil {
-		fmt.Print(err)
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+
+	var r McAfeeResults
+	err = xml.Unmarshal(byteValue, &r)
+
+	if strings.EqualFold(r.File.Status, "") {
+		r.File.Status = "clean"
+		if true {
+			t.Log("SHIZ IS CLEAN YO!")
+			t.Log("Infected: ", r.File.Status)
+			t.Log("Result: ", strings.TrimSpace(r.File.VirusName))
+		}
 	}
-
-	version := strings.TrimSpace(string(v))
-	database := strings.TrimSpace(string(d))
-
-	if true {
-		t.Log("version: ", version)
-		t.Log("database: ", database)
-	}
-
 }

@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -119,13 +118,13 @@ func ParseMcAfeeOutput(mcafeeout string) (ResultsData, error) {
 	mcafee := ResultsData{
 		Infected: false,
 		Engine:   getMcAfeeVersion(),
-		Database: getMcAfeeVPS(),
-		Updated:  getUpdatedDate(),
+		// Database: getMcAfeeVPS(),
+		Updated: getUpdatedDate(),
 	}
 
 	result := strings.Split(mcafeeout, "\t")
 
-	if !strings.Contains(mcafeeout, "[OK]") {
+	if !strings.Contains(mcafeeout, "Found:") {
 		mcafee.Infected = true
 		mcafee.Result = strings.TrimSpace(result[1])
 	}
@@ -135,16 +134,9 @@ func ParseMcAfeeOutput(mcafeeout string) (ResultsData, error) {
 
 // Get Anti-Virus scanner version
 func getMcAfeeVersion() string {
-	versionOut, err := utils.RunCommand(nil, "/bin/scan", "-v")
+	versionOut, err := utils.RunCommand(nil, "/usr/local/uvscan/uvscan", "--version")
 	assert(err)
 	log.Debug("McAfee Version: ", versionOut)
-	return strings.TrimSpace(versionOut)
-}
-
-func getMcAfeeVPS() string {
-	versionOut, err := utils.RunCommand(nil, "/bin/scan", "-V")
-	assert(err)
-	log.Debug("McAfee Database: ", versionOut)
 	return strings.TrimSpace(versionOut)
 }
 
@@ -165,10 +157,7 @@ func getUpdatedDate() string {
 
 func updateAV(ctx context.Context) error {
 	fmt.Println("Updating McAfee...")
-	// McAfee needs to have the daemon started first
-	exec.Command("/etc/init.d/mcafee", "start").Output()
-
-	fmt.Println(utils.RunCommand(ctx, "/var/lib/mcafee/Setup/mcafee.vpsupdate"))
+	fmt.Println(utils.RunCommand(ctx, "/usr/local/uvscan/update"))
 	// Update UPDATED file
 	t := time.Now().Format("20060102")
 	err := ioutil.WriteFile("/opt/malice/UPDATED", []byte(t), 0644)
