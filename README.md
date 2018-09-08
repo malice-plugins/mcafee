@@ -10,7 +10,7 @@ Malice McAfee AntiVirus Plugin
 
 ### Dependencies
 
-- [ubuntu:xenial (_118 MB_\)](https://store.docker.com/images/ubuntu)
+- [ubuntu:bionic (_84.1 MB_\)](https://hub.docker.com/_/ubuntu/)
 
 ## Installation
 
