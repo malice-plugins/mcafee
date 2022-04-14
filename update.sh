@@ -5,7 +5,7 @@ set -ex
 cd /tmp
 
 echo "===> Downloading AV signature updates..."
- wget --progress=bar:force -Nc -r -nd -l1 -A "avvepo????dat.zip" http://download.nai.com/products/DatFiles/4.x/nai/
+ wget --progress=bar:force -Nc -r -nd -l1 -A "avvepo?????dat.zip" http://download.nai.com/products/DatFiles/4.x/nai/
 
 for avvepo in `ls avvepo*`; do
   echo " > unzipping $avvepo"
