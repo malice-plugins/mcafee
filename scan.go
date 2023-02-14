@@ -189,6 +189,10 @@ func webService() {
 	log.Fatal(http.ListenAndServe(":3993", router))
 }
 
+func enableCors(w *http.ResponseWriter) {
+(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+enableCors(&w)
 func webAvScan(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseMultipartForm(32 << 20)
