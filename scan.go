@@ -190,11 +190,11 @@ func webService() {
 }
 
 func enableCors(w *http.ResponseWriter) {
-(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 }
-enableCors(&w)
-func webAvScan(w http.ResponseWriter, r *http.Request) {
 
+func webAvScan(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	r.ParseMultipartForm(32 << 20)
 	file, header, err := r.FormFile("malware")
 	if err != nil {
