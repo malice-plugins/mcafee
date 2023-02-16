@@ -193,7 +193,7 @@ func webService() {
 	})
 
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/scan", webAvScan).Methods("POST")
+	router.HandleFunc("/scan", webAvScan).Methods("POST", "OPTIONS")
 	log.WithFields(log.Fields{
 		"plugin":   name,
 		"category": category,
