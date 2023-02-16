@@ -192,8 +192,8 @@ func webService() {
 		AllowedHeaders: []string{"*"},
 	})
 
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/scan", webAvScan).Methods("POST", "OPTIONS")
+	router := mux.NewRouter()
+	router.HandleFunc("/scan", webAvScan).Methods("POST")
 	log.WithFields(log.Fields{
 		"plugin":   name,
 		"category": category,
