@@ -28,17 +28,21 @@ RUN groupadd -r malice \
     && chown -R malice:malice /malware
 
 # Install McAfee AV
-RUN set -x \
-    && apt-get update \
-    && apt-get install -yq ca-certificates curl --no-install-recommends \
-    && echo "===> Install McAfee..." \
-    && mkdir -p /usr/local/uvscan \
-    && curl http://b2b-download.mcafee.com/products/evaluation/vcl/l64/vscl-l64-604-e.tar.gz \
-    | tar -xzf - -C /usr/local/uvscan \
-    && echo "===> Clean up unnecessary files..." \
-    && apt-get purge -y --auto-remove ca-certificates curl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives /tmp/* /var/tmp/*
+#RUN set -x \
+#    && apt-get update \
+#    && apt-get install -yq ca-certificates curl unzip gzip libarchive-tools --no-install-recommends \
+#    && echo "===> Install McAfee..." \
+#    && mkdir -p /usr/local/uvscan \
+#    && curl http://b2b-download.mcafee.com/products/evaluation/vcl/l64/vscl-l64-604-e.tar.gz \
+#    | gzip -d vscl-l64-604-e.tar.gz \
+#    | tar -xzf vscl-l64-604-e.tar -C /usr/local/uvscan \
+#    && echo "===> Clean up unnecessary files..." \
+#    && apt-get purge -y --auto-remove ca-certificates curl \
+#    && apt-get clean \
+#    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives /tmp/* /var/tmp/*
+RUN mkdir -p /usr/local/uvscan
+COPY ./cls-l64-703-e.tar.gz  /tmp/.
+RUN tar -xzf /tmp/cls-l64-703-e.tar.gz -C /usr/local/uvscan
 
 # Ensure ca-certificates is installed for elasticsearch to use https
 RUN apt-get update -qq && apt-get install -yq --no-install-recommends ca-certificates wget unzip \

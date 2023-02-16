@@ -22,6 +22,7 @@ import (
 	"github.com/malice-plugins/pkgs/utils"
 	"github.com/parnurzeal/gorequest"
 	"github.com/pkg/errors"
+	"github.com/rs/cors"
 	"github.com/urfave/cli"
 )
 
@@ -88,7 +89,6 @@ func AvScan(timeout int) McAfee {
 	defer cancel()
 
 	output, err := utils.RunCommand(ctx, "/usr/local/uvscan/uvscan_secure", path, "--xmlpath=/tmp/"+hash+".xml")
-	log.info(err)
 	assert(err)
 	results, err = ParseMcAfeeOutput(output)
 
@@ -184,22 +184,26 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 
 func webService() {
 
+	fmt.Println("Settin up server, enabling CORS . . .")
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},    // All origins
+		AllowedMethods: []string{"POST"}, // Allowing only get, just an example
+	})
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/scan", webAvScan).Methods("POST")
 	log.WithFields(log.Fields{
 		"plugin":   name,
 		"category": category,
 	}).Info("web service listening on port :3993")
-	log.Fatal(http.ListenAndServe(":3993", router))
+	log.Fatal(http.ListenAndServe(":3993", c.Handler(router)))
 }
 
 func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	(*w).Header().Set("Access-Control-Allow-Methods", "*")
-	(*w).Header().Set("Content-Type", "application/json; charset=UTF-8")
 
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "*")
 }
 
 func webAvScan(w http.ResponseWriter, r *http.Request) {
@@ -240,7 +244,14 @@ func webAvScan(w http.ResponseWriter, r *http.Request) {
 	// Do AV scan
 	path = tmpfile.Name()
 	mcafee := AvScan(60)
+	log.Info("----------------- Scanning Complelted-----------------")
 
+	log.Info("File is: ")
+	log.Info(mcafee.Results.Infected)
+
+	log.Info("-----------------Creating Response-----------------")
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
