@@ -189,7 +189,7 @@ func webService() {
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"}, // All origins
 		AllowedMethods: []string{"*"}, // All methods
-		allowedHeaders: []string{"*"},
+		AllowedHeaders: []string{"*"},
 	})
 
 	router := mux.NewRouter().StrictSlash(true)
