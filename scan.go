@@ -187,8 +187,9 @@ func webService() {
 	fmt.Println("Settin up server, enabling CORS . . .")
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},    // All origins
-		AllowedMethods: []string{"POST"}, // Allowing only get, just an example
+		AllowedOrigins: []string{"*"}, // All origins
+		AllowedMethods: []string{"*"}, // All methods
+		allowedHeaders: []string{"*"},
 	})
 
 	router := mux.NewRouter().StrictSlash(true)
