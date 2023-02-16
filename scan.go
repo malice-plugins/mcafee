@@ -78,6 +78,8 @@ func assert(err error) {
 // AvScan performs antivirus scan
 func AvScan(timeout int) McAfee {
 
+	log.Info("---------Entered AvScan-----------------")
+
 	defer os.Remove("/tmp/" + hash + ".xml")
 
 	var results ResultsData
@@ -86,6 +88,7 @@ func AvScan(timeout int) McAfee {
 	defer cancel()
 
 	output, err := utils.RunCommand(ctx, "/usr/local/uvscan/uvscan_secure", path, "--xmlpath=/tmp/"+hash+".xml")
+	log.info(err)
 	assert(err)
 	results, err = ParseMcAfeeOutput(output)
 
@@ -180,6 +183,7 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 }
 
 func webService() {
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/scan", webAvScan).Methods("POST")
 	log.WithFields(log.Fields{
@@ -191,12 +195,18 @@ func webService() {
 
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	(*w).Header().Set("Access-Control-Allow-Methods", "*")
+	(*w).Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 }
 
 func webAvScan(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	r.ParseMultipartForm(32 << 20)
 	file, header, err := r.FormFile("malware")
+	log.Info("Corse Enabled-------")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintln(w, "Please supply a valid file to scan.")
@@ -206,7 +216,8 @@ func webAvScan(w http.ResponseWriter, r *http.Request) {
 		}).Error(err)
 	}
 	defer file.Close()
-
+	log.Info("------------------Preparing File for Scanning-----------------")
+	log.Info(header.Filename)
 	log.WithFields(log.Fields{
 		"plugin":   name,
 		"category": category,
@@ -225,7 +236,7 @@ func webAvScan(w http.ResponseWriter, r *http.Request) {
 	if err = tmpfile.Close(); err != nil {
 		assert(err)
 	}
-
+	log.Info("----------------- Scanning Started-----------------")
 	// Do AV scan
 	path = tmpfile.Name()
 	mcafee := AvScan(60)
