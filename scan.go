@@ -22,6 +22,7 @@ import (
 	"github.com/malice-plugins/pkgs/utils"
 	"github.com/parnurzeal/gorequest"
 	"github.com/pkg/errors"
+	"github.com/rs/cors"
 	"github.com/urfave/cli"
 )
 
@@ -77,6 +78,8 @@ func assert(err error) {
 
 // AvScan performs antivirus scan
 func AvScan(timeout int) McAfee {
+
+	log.Info("---------Entered AvScan-----------------")
 
 	defer os.Remove("/tmp/" + hash + ".xml")
 
@@ -180,19 +183,35 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 }
 
 func webService() {
-	router := mux.NewRouter().StrictSlash(true)
+
+	fmt.Println("Settin up server, enabling CORS . . .")
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"}, // All origins
+		AllowedMethods: []string{"*"}, // All methods
+		AllowedHeaders: []string{"*"},
+	})
+
+	router := mux.NewRouter()
 	router.HandleFunc("/scan", webAvScan).Methods("POST")
 	log.WithFields(log.Fields{
 		"plugin":   name,
 		"category": category,
 	}).Info("web service listening on port :3993")
-	log.Fatal(http.ListenAndServe(":3993", router))
+	log.Fatal(http.ListenAndServe(":3993", c.Handler(router)))
+}
+
+func enableCors(w *http.ResponseWriter) {
+
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "*")
 }
 
 func webAvScan(w http.ResponseWriter, r *http.Request) {
-
+	enableCors(&w)
 	r.ParseMultipartForm(32 << 20)
 	file, header, err := r.FormFile("malware")
+	log.Info("Corse Enabled-------")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintln(w, "Please supply a valid file to scan.")
@@ -202,7 +221,8 @@ func webAvScan(w http.ResponseWriter, r *http.Request) {
 		}).Error(err)
 	}
 	defer file.Close()
-
+	log.Info("------------------Preparing File for Scanning-----------------")
+	log.Info(header.Filename)
 	log.WithFields(log.Fields{
 		"plugin":   name,
 		"category": category,
@@ -221,11 +241,18 @@ func webAvScan(w http.ResponseWriter, r *http.Request) {
 	if err = tmpfile.Close(); err != nil {
 		assert(err)
 	}
-
+	log.Info("----------------- Scanning Started-----------------")
 	// Do AV scan
 	path = tmpfile.Name()
 	mcafee := AvScan(60)
+	log.Info("----------------- Scanning Complelted-----------------")
 
+	log.Info("File is: ")
+	log.Info(mcafee.Results.Infected)
+
+	log.Info("-----------------Creating Response-----------------")
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
